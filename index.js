@@ -36,7 +36,9 @@ async function handler(request) {
       const avatarResponse = new HTMLRewriter().on("img#avatar", new AvatarHandler(
         'https://www.breakark.com/wp/wp-content/themes/skate/img/about_taisuke.jpg'
       )).transform(styleResponse)
-      const finalResponse = new HTMLRewriter().on("h1#name", new NameHandler('BboySticker')).transform(avatarResponse)
+      const usernameResponse = new HTMLRewriter().on("h1#name", new NameHandler('BboySticker')).transform(avatarResponse)
+      const titleResponse = new HTMLRewriter().on("title", new TitleHandler('Xinyu Zhang')).transform(usernameResponse)
+      const finalResponse = new HTMLRewriter().on("body", new BodyHandler()).transform(titleResponse)
       return finalResponse
     }
   }
@@ -80,9 +82,6 @@ class LinksTransformer {
 }
 
 class StyleHandler {
-  constructor() {
-  }
-
   async element(element) {
     element.removeAttribute('style')
   }
@@ -105,5 +104,21 @@ class NameHandler {
 
   async element(element) {
     element.append(this.name)
+  }
+}
+
+class TitleHandler {
+  constructor(title) {
+    this.title = title
+  }
+
+  element(element) {
+    element.setInnerContent(this.title)
+  }
+}
+
+class BodyHandler {
+  element(element) {
+    element.setAttribute("class", "bg-gray-400")
   }
 }
